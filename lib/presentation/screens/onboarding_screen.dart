@@ -4,6 +4,7 @@ import 'package:flutter_platzi_clone/presentation/colors.dart';
 import 'package:flutter_platzi_clone/presentation/common_widgets/custom_primary_button.dart';
 import 'package:flutter_platzi_clone/presentation/common_widgets/rounded_blur_container.dart';
 import 'package:flutter_platzi_clone/presentation/routes/app_router.dart';
+import 'package:flutter_platzi_clone/services/client_appwrite.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class OnBoardingScreen extends StatelessWidget {
@@ -114,7 +115,10 @@ class OnBoardingScreen extends StatelessWidget {
                     Align(
                       alignment: Alignment.center,
                       child: TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          ClientAppwrite().loginAnonymous();
+                          Navigator.pushNamed(context, AppRouter.home);
+                        },
                         child: Text(
                           'Iniciar más tarde',
                           style: TextStyle(

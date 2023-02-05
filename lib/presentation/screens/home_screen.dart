@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platzi_clone/paths/assets_path.dart';
 import 'package:flutter_platzi_clone/presentation/colors.dart';
+import 'package:flutter_platzi_clone/presentation/common_widgets/search_bar.dart';
+import 'package:flutter_platzi_clone/presentation/screens/onboarding_screen.dart';
+import 'package:flutter_platzi_clone/services/client_appwrite.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -46,9 +49,18 @@ class HomeScreen extends StatelessWidget {
           fit: BoxFit.scaleDown,
         ),
         actions: [
-          SvgPicture.asset(
-            notificationIcon,
-            fit: BoxFit.scaleDown,
+          GestureDetector(
+            onTap: () {
+              ClientAppwrite().logOut();
+              Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const OnBoardingScreen()),
+                  (route) => false);
+            },
+            child: SvgPicture.asset(
+              notificationIcon,
+              fit: BoxFit.scaleDown,
+            ),
           ),
           SizedBox(width: 20.w),
           CircleAvatar(
@@ -60,62 +72,192 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: REdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            SizedBox(height: 37.h),
-            Text(
-              '¿Qué vas a aprender hoy?',
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 24.h),
-            const SearchBar(),
-            SizedBox(height: 24.h),
-            const TitleButtonSection(text: 'Cursos'),
-            SizedBox(height: 24.h),
-            SizedBox(
-              height: 100.h,
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                itemCount: coursesName.length,
-                itemBuilder: (_, int index) {
-                  return CourseItem(
-                    pic: coursesPics[index],
-                    title: coursesName[index],
-                    color: coursesColors[index],
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 34.h),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Aprende Gratis',
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 37.h),
+              Text(
+                '¿Qué vas a aprender hoy?',
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
                 ),
-                Row(
-                  children: const [
-                    _Dot(isSelected: true),
-                    _Dot(isSelected: false),
-                    _Dot(isSelected: false),
-                    _Dot(isSelected: false),
-                  ],
-                )
-              ],
-            )
-          ],
+              ),
+              SizedBox(height: 24.h),
+              const SearchBar(),
+              SizedBox(height: 24.h),
+              const TitleButtonSection(text: 'Cursos'),
+              SizedBox(height: 24.h),
+              SizedBox(
+                height: 100.h,
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: coursesName.length,
+                  itemBuilder: (_, int index) {
+                    return CourseItem(
+                      pic: coursesPics[index],
+                      title: coursesName[index],
+                      color: coursesColors[index],
+                    );
+                  },
+                ),
+              ),
+              SizedBox(height: 34.h),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Aprende Gratis',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Row(
+                    children: const [
+                      _Dot(isSelected: true),
+                      _Dot(isSelected: false),
+                      _Dot(isSelected: false),
+                      _Dot(isSelected: false),
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(height: 24.h),
+              SizedBox(
+                height: 180.h,
+                child: ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: 5,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (_, __) {
+                    return const CourseInfo();
+                  },
+                ),
+              ),
+              SizedBox(height: 24.h),
+              // Banner
+              const HomeBanner()
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class CourseInfo extends StatelessWidget {
+  const CourseInfo({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: REdgeInsets.only(right: 15.w),
+      width: 150.w,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 100.h,
+            width: 150.w,
+            decoration: BoxDecoration(
+              color: Colors.red,
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+          ),
+          SizedBox(height: 10.h),
+          Text(
+            'Aprende sobre la nube',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12.sp,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          SizedBox(height: 7.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SvgPicture.asset(instructorIcon),
+              SizedBox(width: 5.w),
+              Text(
+                'Héctor Vega',
+                style: TextStyle(fontSize: 10.sp, color: Colors.white),
+              ),
+              SizedBox(width: 15.w),
+              SvgPicture.asset(studentsIcon),
+              SizedBox(width: 5.w),
+              Text(
+                '2k alumnos',
+                style: TextStyle(fontSize: 10.sp, color: Colors.white),
+              ),
+            ],
+          ),
+          SizedBox(height: 10.h),
+          Container(
+            width: 70.w,
+            height: 15.h,
+            decoration: BoxDecoration(
+              color: itemInfoColor.withOpacity(0.21),
+              borderRadius: BorderRadius.circular(7.5),
+            ),
+            child: Center(
+              child: Text(
+                'Nube con azure',
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  color: itemInfoColor,
+                  fontSize: 10.sp,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class HomeBanner extends StatelessWidget {
+  const HomeBanner({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 100.sw,
+      height: 80.h,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20.r),
+        gradient: LinearGradient(colors: [
+          const Color(0XFF9D4D52).withOpacity(0.37),
+          const Color(0XFF101E3B),
+          const Color(0XFF94B061).withOpacity(0.51),
+        ], transform: const GradientRotation(-94)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Image.asset(
+            banner,
+            fit: BoxFit.fitHeight,
+          ),
+          Text(
+            'Accede a más de 700 cursos\nadquiriendo un  plan',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+              fontSize: 13.sp,
+            ),
+          )
+        ],
       ),
     );
   }
@@ -203,46 +345,13 @@ class CourseItem extends StatelessWidget {
             ),
             child: Image(
               image: AssetImage(pic),
-              width: 30,
+              fit: BoxFit.scaleDown,
             ),
           ),
           SizedBox(height: 13.h),
           Text(
             title,
             style: TextStyle(fontSize: 10.sp, color: Colors.white),
-          )
-        ],
-      ),
-    );
-  }
-}
-
-class SearchBar extends StatelessWidget {
-  const SearchBar({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 50.h,
-      width: 100.sw,
-      decoration: BoxDecoration(
-        color: searchBarColor,
-        borderRadius: BorderRadius.circular(24.r),
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(width: 20.w),
-          SvgPicture.asset(searchIcon),
-          SizedBox(width: 12.w),
-          Text(
-            '¿Qué te gustaría aprender hoy?',
-            style: TextStyle(
-              fontSize: 12.sp,
-              color: Colors.white,
-            ),
           )
         ],
       ),

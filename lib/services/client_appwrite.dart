@@ -17,10 +17,9 @@ class ClientAppwrite extends ChangeNotifier {
     client
         .setEndpoint('http://192.168.1.14:80/v1')
         .setProject('63decff1ba55ee44ef0f');
-    log('Se supone que ya entró xd');
   }
 
-  createAccount(String name, String email, String password) async {
+  Future<bool> createAccount(String name, String email, String password) async {
     try {
       final result = await account.create(
         userId: ID.unique(),
@@ -29,20 +28,37 @@ class ClientAppwrite extends ChangeNotifier {
         name: name,
       );
       debugPrint('$result');
+      return result.status;
     } catch (error) {
       debugPrint('$error');
+      return false;
     }
   }
 
-  login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     try {
       final result = await account.createEmailSession(
         email: email,
         password: password,
       );
       debugPrint('$result');
+      return result.current;
+    } catch (error) {
+      debugPrint('$error');
+      return false;
+    }
+  }
+
+  loginAnonymous() async {
+    try {
+      final user = await account.createAnonymousSession();
+      log(user.ip);
     } catch (error) {
       debugPrint('$error');
     }
+  }
+
+  logOut() async {
+    await account.deleteSessions();
   }
 }

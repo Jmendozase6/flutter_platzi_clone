@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platzi_clone/paths/assets_path.dart';
 import 'package:flutter_platzi_clone/presentation/colors.dart';
 import 'package:flutter_platzi_clone/presentation/common_widgets/custom_primary_button.dart';
+import 'package:flutter_platzi_clone/presentation/common_widgets/custom_text_form_field.dart';
 import 'package:flutter_platzi_clone/presentation/common_widgets/rounded_blur_container.dart';
 import 'package:flutter_platzi_clone/services/client_appwrite.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -141,66 +142,17 @@ class _SignUpFormState extends State<SignUpForm> {
             text: 'Registrarme',
             color: secondaryColor,
             onPressed: () async {
+              FocusManager.instance.primaryFocus?.unfocus();
               if (_formKey.currentState!.validate()) {
-                ClientAppwrite().createAccount(nameController.text,
-                    emailController.text, passwordController.text);
+                bool status = await ClientAppwrite().createAccount(
+                    nameController.text,
+                    emailController.text,
+                    passwordController.text);
               }
             },
           ),
           SizedBox(height: 20.h),
         ],
-      ),
-    );
-  }
-}
-
-class CustomTextFormField extends StatelessWidget {
-  const CustomTextFormField({
-    Key? key,
-    required this.hintText,
-    required this.controller,
-    required this.isPassword,
-  }) : super(key: key);
-
-  final String hintText;
-  final TextEditingController controller;
-  final bool isPassword;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 100.sw,
-      height: 50.h,
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14.r),
-        color: searchBarColor,
-      ),
-      child: TextFormField(
-        controller: controller,
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Debe rellenar este campo';
-          }
-          if (!isPassword) {
-            if (value.length < 8) {
-              return 'Use más de 8 caractéres';
-            }
-          }
-          return null;
-        },
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 15.sp,
-        ),
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: hintText,
-          hintStyle: TextStyle(
-            color: Colors.white,
-            fontSize: 15.sp,
-          ),
-        ),
       ),
     );
   }

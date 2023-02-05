@@ -20,3 +20,4 @@ Color pythonColor = const Color(0XFF429FF8);
 
 // Bubble Color
 Color bubbleColor = const Color(0XFF314162);
+Color itemInfoColor = const Color(0XFF429FF8);

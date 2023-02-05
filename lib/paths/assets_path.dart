@@ -19,3 +19,10 @@ const String designPic = 'assets/icons/design_pic.png';
 const String marketingPic = 'assets/icons/marketing_pic.png';
 const String bussinessPic = 'assets/icons/bussiness_pic.png';
 const String startupPic = 'assets/icons/startup_pic.png';
+
+// Course info
+const String instructorIcon = 'assets/icons/instructor_icon.svg';
+const String studentsIcon = 'assets/icons/students_icon.svg';
+
+// Bannmer
+const String banner = 'assets/images/banner.png';

@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platzi_clone/presentation/routes/app_router.dart';
+import 'package:flutter_platzi_clone/utils/notifiers.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -13,13 +18,16 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       designSize: const Size(390, 844),
       builder: (BuildContext context, Widget? child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Platzi Clone',
-          initialRoute: AppRouter.onBoard,
-          onGenerateRoute: AppRouter.onGenerateRoute,
-          theme: ThemeData(
-            fontFamily: 'Gilroy',
+        return MultiProvider(
+          providers: providers,
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Platzi Clone',
+            initialRoute: AppRouter.onBoard,
+            onGenerateRoute: AppRouter.onGenerateRoute,
+            theme: ThemeData(
+              fontFamily: 'Gilroy',
+            ),
           ),
         );
       },

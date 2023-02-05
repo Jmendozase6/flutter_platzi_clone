@@ -3,11 +3,11 @@ import 'package:flutter_platzi_clone/paths/assets_path.dart';
 import 'package:flutter_platzi_clone/presentation/colors.dart';
 import 'package:flutter_platzi_clone/presentation/common_widgets/custom_primary_button.dart';
 import 'package:flutter_platzi_clone/presentation/common_widgets/rounded_blur_container.dart';
-import 'package:flutter_platzi_clone/presentation/routes/app_router.dart';
+import 'package:flutter_platzi_clone/services/client_appwrite.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class OnBoardingScreen extends StatelessWidget {
-  const OnBoardingScreen({super.key});
+class SignInScreen extends StatelessWidget {
+  const SignInScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +15,8 @@ class OnBoardingScreen extends StatelessWidget {
       backgroundColor: primaryColor,
       body: SafeArea(
         child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 padding: REdgeInsets.symmetric(horizontal: 20),
@@ -80,7 +80,7 @@ class OnBoardingScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Logra todas tus\nmetas ahora',
+                      'Rellena tus datos\nPara registrarte',
                       style: TextStyle(
                         fontSize: 35.sp,
                         color: Colors.white,
@@ -88,42 +88,7 @@ class OnBoardingScreen extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: 20.h),
-                    Text(
-                      'Cursos online para especializarte en las\nprofesiones que lideran el mercado hoy.',
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.white,
-                      ),
-                    ),
-                    SizedBox(height: 40.h),
-                    // Sign in
-                    CustomPrimaryButton(
-                      text: 'Iniciar sesión',
-                      color: secondaryColor,
-                      onPressed: () =>
-                          Navigator.pushNamed(context, AppRouter.signIn),
-                    ),
-                    SizedBox(height: 20.h),
-                    // Sign up
-                    CustomSecondaryButton(
-                      text: 'Crear cuenta',
-                      color: secondaryColor,
-                      onPressed: () =>
-                          Navigator.pushNamed(context, AppRouter.signUp),
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: TextButton(
-                        onPressed: () {},
-                        child: Text(
-                          'Iniciar más tarde',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.sp,
-                          ),
-                        ),
-                      ),
-                    ),
+                    const SignUpForm(),
                   ],
                 ),
               ),
@@ -135,34 +100,99 @@ class OnBoardingScreen extends StatelessWidget {
   }
 }
 
-class CustomSecondaryButton extends StatelessWidget {
-  const CustomSecondaryButton({
+class SignUpForm extends StatefulWidget {
+  const SignUpForm({super.key});
+
+  @override
+  State<SignUpForm> createState() => _SignUpFormState();
+}
+
+class _SignUpFormState extends State<SignUpForm> {
+  final _formKey = GlobalKey<FormState>();
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: [
+          CustomTextFormField(
+            hintText: 'Email',
+            controller: emailController,
+            isPassword: false,
+          ),
+          SizedBox(height: 10.h),
+          CustomTextFormField(
+            hintText: 'Password',
+            controller: passwordController,
+            isPassword: true,
+          ),
+          SizedBox(height: 20.h),
+          CustomPrimaryButton(
+            text: 'Iniciar Sesión',
+            color: secondaryColor,
+            onPressed: () async {
+              if (_formKey.currentState!.validate()) {
+                ClientAppwrite().createAccount(nameController.text,
+                    emailController.text, passwordController.text);
+              }
+            },
+          ),
+          SizedBox(height: 20.h),
+        ],
+      ),
+    );
+  }
+}
+
+class CustomTextFormField extends StatelessWidget {
+  const CustomTextFormField({
     Key? key,
-    required this.text,
-    required this.color,
-    this.onPressed,
+    required this.hintText,
+    required this.controller,
+    required this.isPassword,
   }) : super(key: key);
 
-  final String text;
-  final Color color;
-  final VoidCallback? onPressed;
+  final String hintText;
+  final TextEditingController controller;
+  final bool isPassword;
+
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 100.sw,
       height: 50.h,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(color: Colors.white),
+        color: searchBarColor,
       ),
-      child: MaterialButton(
-        onPressed: onPressed,
-        child: Text(
-          text,
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
+      child: TextFormField(
+        controller: controller,
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Debe rellenar este campo';
+          }
+          if (!isPassword) {
+            if (value.length < 8) {
+              return 'Use más de 8 caractéres';
+            }
+          }
+          return null;
+        },
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 15.sp,
+        ),
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: hintText,
+          hintStyle: TextStyle(
             color: Colors.white,
+            fontSize: 15.sp,
           ),
         ),
       ),
